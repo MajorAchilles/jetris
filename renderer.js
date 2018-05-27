@@ -2,12 +2,6 @@ const clearCanvas = (canvas) => {
     canvas.width = canvas.width;
 }
 
-const Colors = {
-    BLACK: "#000000",
-    DARKGRAY: "#535353",
-    LIGHTGRAY: "#797979"
-}
-
 const renderBlock = (context, left, top, blockColor = Colors.BLACK) => {
     context.beginPath();
     context.strokeStyle = blockColor;
@@ -23,16 +17,8 @@ const renderBlock = (context, left, top, blockColor = Colors.BLACK) => {
 const renderFrame = (frameState, forceDraw = false) => {
     frameState.forEach((row) => {
         row.forEach(column => {
-            if (column.isOccupied || forceDraw) {
-                renderBlock(arenaContext, column.left, column.top);
-            }
-
-            if(column.tailStart) {
-                renderBlock(arenaContext, column.left, column.top, Colors.DARKGRAY);
-            }
-
-            if(column.tailEnd) {
-                renderBlock(arenaContext, column.left, column.top, Colors.LIGHTGRAY);
+            if (column.blockType !== BlockType.NONE || forceDraw) {
+                renderBlock(arenaContext, column.left, column.top, Colors[column.blockType]);
             }
         });
     });

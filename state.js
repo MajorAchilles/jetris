@@ -6,9 +6,7 @@ const getEmptyState = () => {
             innerArray.push({
                 top: i * blockHeight + offset,
                 left: j * blockWidth  + offset,
-                isOccupied: false,
-                tailStart: false,
-                tailEnd: false
+                blockType: BlockType.NONE
             });
         }
         stateMatrix.push(innerArray);
@@ -20,7 +18,20 @@ const getStateData = (stateMatrix, rowIndex = 0, columnIndex = 0) => {
     return stateMatrix[rowIndex][columnIndex];
 }
 
+const mergeState = (previous, current) => {
+    return previous.map((row, rowIndex) => {
+        const currentStateRow = current[rowIndex];
+        row.forEach((column, columnIndex) => {
+            if (currentStateRow[columnIndex].blockType !== BlockType.NONE) {
+                column.blockType = currentStateRow[columnIndex].blockType;
+            }
+        });
+        return row;
+    })
+};
+
 const State = {
     getEmptyState,
-    getStateData
+    getStateData,
+    mergeState
 }
