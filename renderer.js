@@ -1,3 +1,5 @@
+const positionMask = getPositionMask();
+
 const clearCanvas = (canvas) => {
     canvas.width = canvas.width;
 }
@@ -15,16 +17,17 @@ const renderBlock = (context, left, top, blockColor = Colors.BLACK) => {
 }
 
 const renderFrame = (frameState, forceDraw = false) => {
-    frameState.forEach((row) => {
-        row.forEach(column => {
-            if (column.blockType !== BlockType.NONE || forceDraw) {
-                renderBlock(arenaContext, column.left, column.top, Colors[column.blockType]);
+    frameState.forEach((row, rowIndex) => {
+        row.forEach((blockType, columnIndex) => {
+            const position = positionMask[rowIndex][columnIndex];
+            if (blockType || forceDraw) {
+                renderBlock(arenaContext, position.left, position.top, getBlockColor(blockType));
             }
         });
     });
-
-    return true;
 }
+
+const getBlockColor = blockType => Colors[BlockColors[blockType]];
 
 const Renderer = {
     clearCanvas,

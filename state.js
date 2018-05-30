@@ -3,11 +3,7 @@ const getEmptyState = () => {
     for (let i = 0; i < rowCount; i++) {
         const innerArray = [];
         for (let j = 0; j < columnCount; j++) {
-            innerArray.push({
-                top: i * blockHeight + offset,
-                left: j * blockWidth  + offset,
-                blockType: BlockType.NONE
-            });
+            innerArray.push(BlockType.NONE);
         }
         stateMatrix.push(innerArray);
     }
@@ -34,17 +30,20 @@ const getStateData = (stateMatrix, rowIndex = 0, columnIndex = 0) => {
 }
 
 const mergeState = (previous, next) => {
-    return previous.map((row, rowIndex) => {
+    return previous.map((previousRow, rowIndex) => {
         const nextRow = next[rowIndex];
-        const mergedRow = row.map((column, columnIndex) => {
+        const mergedRow = previousRow.map((previousColumn, columnIndex) => {
             const nextColumn = nextRow[columnIndex];
-            return Object.assign({}, column, nextColumn.blockType === BlockType.NONE ? {} : { blockType: nextColumn.blockType })
+            return nextColumn === BlockType.NONE ? previousColumn : nextColumn;
         });
         return mergedRow;
     })
 };
 
+const copyState = state => state.map(row => [...row]);
+
 const State = {
+    copyState,
     getEmptyState,
     getPositionMask,
     getStateData,

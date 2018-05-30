@@ -9,12 +9,17 @@ const lastRowTop = (rowCount * blockHeight) + offset;
 const arenaCanvas = document.querySelector(".arena");
 const arenaContext = arenaCanvas.getContext("2d");
 
-
 const BlockType = {
-    NONE: "NONE",
-    BLOCK: "BLACK",
-    TAIL_END: "LIGHTGRAY",
-    TAIL_START: "DARKGRAY"
+    NONE: 0,
+    BLOCK: 1,
+    TAIL_START: 2,
+    TAIL_END: 3
+}
+
+const BlockColors = {
+    "1": "BLACK",
+    "2": "DARKGRAY",
+    "3": "LIGHTGRAY"
 }
 
 const Colors = {
