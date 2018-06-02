@@ -1,4 +1,31 @@
-const drawStreakState = (previous) => {
+const getShipSprites = () => {
+    const centerBlock = Math.floor(columnCount/2);
+    const shipStart = State.getEmptyState();
+    const shipNormal = State.getEmptyState();
+    const shipForward = State.getEmptyState();
+    const shipForwarder = State.getEmptyState();
+
+    shipStart[rowCount - 1][centerBlock] = BlockType.BLOCK;
+
+    shipForward[rowCount - 3][centerBlock] = BlockType.BLOCK;
+    shipForward[rowCount - 2][centerBlock - 1] = BlockType.BLOCK;
+    shipForward[rowCount - 2][centerBlock] = BlockType.BLOCK;
+    shipForward[rowCount - 2][centerBlock + 1] = BlockType.BLOCK;
+
+    shipForwarder[rowCount - 4][centerBlock] = BlockType.BLOCK;
+    shipForwarder[rowCount - 3][centerBlock - 1] = BlockType.BLOCK;
+    shipForwarder[rowCount - 3][centerBlock] = BlockType.BLOCK;
+    shipForwarder[rowCount - 3][centerBlock + 1] = BlockType.BLOCK;
+
+    shipNormal[rowCount - 2][centerBlock] = BlockType.BLOCK;
+    shipNormal[rowCount - 1][centerBlock - 1] = BlockType.BLOCK;
+    shipNormal[rowCount - 1][centerBlock] = BlockType.BLOCK;
+    shipNormal[rowCount - 1][centerBlock + 1] = BlockType.BLOCK;
+
+    return [shipStart, shipNormal, shipForward, shipForwarder];
+}
+
+const drawStreakState = (previous, isSeeded) => {
     if(!previous || !previous.length) {
         return getEmptyState();
     }
@@ -27,7 +54,7 @@ const drawStreakState = (previous) => {
             }
         }
 
-        if (Math.random(0, 1) < 0.2) {
+        if (isSeeded && Math.random(0, 1) < 0.2) {
             const streakColumn = Math.floor(Math.random(0, 1) * columnCount);
             newState[rowIndex][streakColumn] = BlockType.BLOCK;
         }
@@ -36,28 +63,41 @@ const drawStreakState = (previous) => {
     return newState;
 }
 
-const getShipSprites = () => {
-    const centerBlock = Math.floor(columnCount/2);
-    const shipStart = State.getEmptyState();
-    const shipNormal = State.getEmptyState();
-    const shipForward = State.getEmptyState();
+const moveShipLeft = (shipLayer) => {
+    const newLayer = State.copyState(shipLayer);
 
-    shipStart[rowCount - 1][centerBlock] = BlockType.BLOCK;
+    for(let rowIndex = 0; rowIndex < rowCount; rowCount++) {
+        for(let colIndex = colCount - 1; colIndex >= 0; colCount--) {
+            if (colIndex === colCount - 1) {
+                newLayer[colIndex] === BlockType.NONE;
+            } else {
+                newLayer[colIndex] === newLayer[colIndex + 1];
+            }
+        }
+    }
 
-    shipForward[rowCount - 3][centerBlock] = BlockType.BLOCK;
-    shipForward[rowCount - 2][centerBlock - 1] = BlockType.BLOCK;
-    shipForward[rowCount - 2][centerBlock] = BlockType.BLOCK;
-    shipForward[rowCount - 2][centerBlock + 1] = BlockType.BLOCK;
+    return newLayer;
+}
 
-    shipNormal[rowCount - 2][centerBlock] = BlockType.BLOCK;
-    shipNormal[rowCount - 1][centerBlock - 1] = BlockType.BLOCK;
-    shipNormal[rowCount - 1][centerBlock] = BlockType.BLOCK;
-    shipNormal[rowCount - 1][centerBlock + 1] = BlockType.BLOCK;
+const moveShipRight = (shipLayer) => {
+    const newLayer = State.copyState(shipLayer);
 
-    return [shipStart, shipNormal, shipForward];
+    for(let rowIndex = 0; rowIndex < rowCount; rowCount++) {
+        for(let colIndex = 0; colIndex < colCount; colCount++) {
+            if (colIndex === 0) {
+                newLayer[colIndex] === BlockType.NONE;
+            } else {
+                newLayer[colIndex] === newLayer[colIndex - 1];
+            }
+        }
+    }
+
+    return newLayer;
 }
 
 const Game = {
     drawStreakState,
-    getShipSprites
+    getShipSprites,
+    moveShipLeft,
+    moveShipRight
 };
